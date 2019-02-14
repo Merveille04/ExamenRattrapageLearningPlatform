@@ -3,9 +3,9 @@ package mooc;
 import java.util.*;
 
 public class Platform {
-    private Set<Course> listeCours;
-    private Set<Person> listeEtudiant;
-    private Set<Enrollment> listeInscrits;
+     Set<Course> listeCours = new HashSet<>();
+     Set<Person> listeEtudiant= new HashSet<>();
+     Set<Enrollment> listeInscrits= new HashSet<>();
 
 	public Platform() {
 	}
@@ -16,7 +16,7 @@ public class Platform {
 	 */
 	public void addCourse(Course c) {
             if (c == null){
-               throw new IllegalArgumentException ("la course ne peut pas etre nulle");
+               throw new NullPointerException ("la course ne peut pas etre nulle");
             }
 		listeCours.add(c);
 	}
@@ -41,10 +41,12 @@ public class Platform {
 	 */
 	public void registerStudent(Person s) {
             if (s == null){
-               throw new IllegalArgumentException ("il faut un etudiant");
+               throw new NullPointerException ("il faut un etudiant");
             }
+            else {
 		listeEtudiant.add(s);
-	}
+	        }
+        }
 
 	/**
 	 * Inscrire un étudiant à un cours
@@ -61,7 +63,6 @@ public class Platform {
               else { 
                  throw new PlatformException ("cet etudiant n'est pas inscrit à l'université", s, c);
               }
-        
 	}
 
 	/**
@@ -71,12 +72,12 @@ public class Platform {
 	 * @throws PlatformException si l'étudiant a déjà une note àce cours
 	 */
 	public void withdraw(Person s, Course c) throws PlatformException {
-            Enrollment inscription = new Enrollment(s, c);
-		if (inscription.studentHasMark()== true){
-                throw new PlatformException ("cet etudiant a deja une note à ce cours", s, c); }
-              else {
-                listeEtudiant.remove(s);
+            for (Enrollment enregistrement: listeInscrits) {
+                if (enregistrement.getCourse()== c && enregistrement.getPerson()== s && enregistrement.studentHasMark()== false){
+                    listeInscrits.remove(enregistrement);
                 }
+            }
+            
 	}
 
 	/**
@@ -133,14 +134,15 @@ public class Platform {
 	 * @throws PlatformException si le cours n'est pas dispensé par l'université
 	 */
 	public Set<Person> studentsForCourse(Course c) throws PlatformException {
-               
-		if (!listeCours.contains(c)){
-                throw new PlatformException ("ce cours n'est pas dispensé par l'université", s, c); }
-                else {
-                    return 
-                }
-	}
-
+             if (listeCours.contains(c)) {
+                 for(Enrollment enregistrement : listeInscrits){
+                     if(enregistrement.getCourse()== c){
+                         listeEtudiant.add ( enregistrement.getPerson());
+                     }
+                 }
+             }
+            return listeEtudiant;
+            }
 	/**
 	 * @param s l'étudiant considéré
 	 * @return les cours auxquels un étudiant est incrit
